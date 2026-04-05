@@ -1,0 +1,317 @@
+{
+  "gsap": [],
+  "threeJs": [],
+  "canvas": [],
+  "scrollTriggers": [],
+  "hoverEffects": [
+    {
+      "tag": "A",
+      "className": "",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "A",
+      "className": "",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "A",
+      "className": "header_active_page__1lI7S",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "A",
+      "className": "",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_index_num__JkvW1",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB catalog_img_inview__wqa2g",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB ",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB ",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB ",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "catalog_img_wrapper_single__RnyBB ",
+      "transition": "all",
+      "transform": null,
+      "boxShadow": null
+    }
+  ],
+  "intersectionObservers": []
+}

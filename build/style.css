@@ -1,0 +1,214 @@
+/* === Fonts === */
+@font-face {
+  font-family: Waldenburg;
+  src: url(../_next/static/media/3c890a0251517e5f-s.p.woff2) format("woff2");
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
+  font-family: Waldenburg;
+  src: url(../_next/static/media/7e14bb49633babfd-s.p.woff) format("woff");
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* === Variables === */
+:root {
+  --white: #f7f7f7;
+  --black: #292929;
+  --gray: #bebebe;
+  --light_gray: #ebebeb;
+  --link_duration: 350ms;
+  --easing: cubic-bezier(0.66, 0.33, 0, 1);
+  --easing_2: cubic-bezier(0.33, 0.15, 0.15, 1);
+}
+
+/* === Reset === */
+*, *::before, *::after { box-sizing: border-box; }
+a, abbr, acronym, address, applet, article, aside, audio, b, big, blockquote,
+body, canvas, caption, center, cite, code, dd, del, details, dfn, div, dl, dt,
+em, embed, fieldset, figcaption, figure, footer, form, h1, h2, h3, h4, h5, h6,
+header, hgroup, html, i, iframe, img, ins, kbd, label, legend, li, mark, menu,
+nav, object, ol, output, p, pre, q, ruby, s, samp, section, small, span, strike,
+strong, sub, summary, table, tbody, td, tfoot, th, thead, time, tr, tt, u, ul,
+var, video {
+  margin: 0; padding: 0; border: 0;
+  font-size: 100%; font: inherit; vertical-align: baseline;
+}
+
+/* === Base === */
+html, body {
+  background-color: var(--white);
+  height: 100%;
+  scrollbar-width: none;
+}
+body {
+  font-family: Waldenburg, Arial, sans-serif;
+  color: var(--black);
+  font-size: 12px !important;
+  line-height: 120%;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "kern" 1;
+  font-kerning: normal;
+}
+a {
+  font-family: Waldenburg, Arial, sans-serif;
+  color: var(--black);
+  font-size: 12px !important;
+  line-height: 120%;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 400;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  transition-duration: var(--link_duration);
+  transition-timing-function: var(--easing);
+}
+@media (hover: hover) {
+  a:hover { color: var(--gray); }
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #fff; }
+::-webkit-scrollbar-thumb { background: var(--gray); }
+::selection { background-color: var(--gray); color: var(--light_gray); }
+
+/* === Header === */
+.header {
+  z-index: 100;
+  position: fixed;
+  top: 48px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(0);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 24px;
+  align-items: center;
+  padding-left: 24px;
+  padding-right: 24px;
+  transition: top 1s cubic-bezier(0.35, 0, 0.15, 1), opacity 0.25s var(--easing_2);
+  /* Hidden on home page */
+  opacity: 0;
+  pointer-events: none;
+  touch-action: none;
+}
+.header > * { white-space: nowrap; }
+
+/* === Preloader === */
+.preloader {
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  scroll-snap-type: y mandatory;
+  scroll-behavior: smooth;
+  cursor: pointer;
+  opacity: 0;
+  animation-delay: 0.5s;
+  animation-name: fade-in;
+  animation-duration: 1s;
+  animation-timing-function: var(--easing_2);
+  animation-fill-mode: forwards;
+}
+
+/* === Slide === */
+.slide {
+  position: relative;
+  min-height: 100%;
+  scroll-snap-align: start;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 1.5s cubic-bezier(0.5, 0, 0.15, 1);
+}
+
+/* === Slide Images === */
+.slide-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.slide-img.mobile { display: none; }
+
+@media (max-width: 600px) {
+  .slide-img { display: none; }
+  .slide-img.mobile { display: block; }
+}
+
+/* === SVG Tag === */
+.slide-tag {
+  max-height: calc(100% - 48px);
+  width: 10%;
+  height: auto;
+  position: absolute;
+  right: 48px;
+  bottom: 48px;
+  opacity: 0;
+  z-index: 1;
+}
+.slide-tag.active {
+  animation-name: fade-in-out;
+  animation-delay: 1.25s;
+  animation-duration: 4s;
+  animation-timing-function: var(--easing_2);
+  animation-fill-mode: forwards;
+}
+
+/* === Loader === */
+.loader {
+  z-index: 1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: opacity 0.25s linear;
+}
+.loader.loaded { opacity: 0 !important; pointer-events: none; }
+
+/* === Animations === */
+@keyframes fade-in {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes fade-in-out {
+  0%, 100% { opacity: 0; }
+  20%, 80% { opacity: 1; }
+}
+
+/* === Responsive SVG Tag === */
+@media (max-width: 1439px) { .slide-tag { width: 17.5%; } }
+@media (max-width: 1151px) { .slide-tag { width: 20%; } }
+@media (max-width: 731px)  { .slide-tag { width: 25%; } }
+@media (max-width: 599px)  {
+  .slide-tag {
+    width: 66%;
+    left: 50%;
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* === Header responsive === */
+@media (max-width: 384px) {
+  .header {
+    flex-wrap: wrap;
+    row-gap: 4px;
+    width: 100%;
+  }
+}

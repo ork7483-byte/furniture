@@ -1,0 +1,107 @@
+{
+  "gsap": [],
+  "threeJs": [],
+  "canvas": [],
+  "scrollTriggers": [],
+  "hoverEffects": [
+    {
+      "tag": "A",
+      "className": "",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "A",
+      "className": "header_active_page__1lI7S",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "A",
+      "className": "",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "A",
+      "className": "",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "commissions_active_index__gpShw",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1) 0.25s",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "commissions_index_num__WBQBN",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "commissions_index_num__WBQBN",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "commissions_index_num__WBQBN",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "commissions_index_num__WBQBN",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "commissions_index_num__WBQBN",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "commissions_index_num__WBQBN",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "commissions_index_num__WBQBN",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "commissions_index_num__WBQBN",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    },
+    {
+      "tag": "BUTTON",
+      "className": "commissions_index_num__WBQBN",
+      "transition": "0.35s cubic-bezier(0.66, 0.33, 0, 1)",
+      "transform": null,
+      "boxShadow": null
+    }
+  ],
+  "intersectionObservers": []
+}

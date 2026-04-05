@@ -1,0 +1,106 @@
+<!DOCTYPE html><html lang="en"><head><script>
+(function(){
+  // 1. 기본 reload 차단
+  const noop = function(){ console.log("Blocked reload"); };
+  window.location.reload = noop;
+
+  // 2. Sanity Live / Next.js Fast Refresh 웹소켓 & EventSource 끊김에 의한 무한 새로고침 차단
+  window.EventSource = function(){ return { close:noop, addEventListener:noop, removeEventListener:noop, readyState:2 }; };
+  window.WebSocket = function(){ return { send:noop, close:noop, addEventListener:noop, removeEventListener:noop, readyState:1 }; };
+
+  // 3. location.replace / assign 을 통한 강제 이동 차단
+  const _replace = window.location.replace;
+  const _assign = window.location.assign;
+  window.location.replace = function(url){ if(url !== window.location.href) _replace.call(window.location, url); };
+  window.location.assign = function(url){ if(url !== window.location.href) _assign.call(window.location, url); };
+
+  // 4. [Sanity 완전 차단] Sanity Live Preview / Groq 실시간 구독 무력화
+  // Sanity client의 listen(), live preview, 실시간 쿼리 차단
+  var _origFetch = window.fetch;
+  window.fetch = function(url, opts) {
+    var urlStr = typeof url === 'string' ? url : (url && url.url) || '';
+    // Sanity API 실시간 요청 차단 (listen, live preview)
+    if (urlStr.indexOf('sanity.io') !== -1 && (urlStr.indexOf('listen') !== -1 || urlStr.indexOf('mutate') !== -1)) {
+      console.log('Blocked Sanity live request:', urlStr);
+      return Promise.resolve(new Response('{}', { status: 200, headers: {'Content-Type':'application/json'} }));
+    }
+    // Sanity CDN groq 쿼리의 반복 polling 차단
+    if (urlStr.indexOf('apicdn.sanity.io') !== -1 && urlStr.indexOf('$listen') !== -1) {
+      console.log('Blocked Sanity listen:', urlStr);
+      return Promise.resolve(new Response('{}', { status: 200, headers: {'Content-Type':'application/json'} }));
+    }
+    return _origFetch.apply(this, arguments);
+  };
+
+  // 5. [Sanity] MutationObserver 기반 자동 새로고침 차단
+  // Sanity는 DOM 변경 감지 후 리렌더링 트리거하는 경우가 있음
+  var _origMO = window.MutationObserver;
+  window.MutationObserver = function(callback) {
+    // 콜백을 감싸서 reload 시도하면 차단
+    var wrappedCallback = function(mutations, observer) {
+      try { callback(mutations, observer); } catch(e) {}
+    };
+    return new _origMO(wrappedCallback);
+  };
+  window.MutationObserver.prototype = _origMO.prototype;
+
+  // 6. [Sanity] setInterval/setTimeout 기반 polling 새로고침 차단
+  var _origSetInterval = window.setInterval;
+  window.setInterval = function(fn, ms) {
+    // 5초 이하 반복은 Sanity polling일 가능성 → 30초로 늦춤
+    if (ms && ms < 5000) ms = 30000;
+    return _origSetInterval.call(window, fn, ms);
+  };
+
+  // 7. meta refresh 태그 제거
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('meta[http-equiv="refresh"]').forEach(function(m) { m.remove(); });
+    // 폼 submit 전송 차단 (백엔드로 데이터 전송 방지)
+    document.querySelectorAll('form').forEach(function(form) {
+      form.removeAttribute('action');
+      form.addEventListener('submit', function(e) { e.preventDefault(); }, true);
+    });
+  });
+})();
+</script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="preload" href="/_next/static/media/3c890a0251517e5f-s.p.woff2" as="font" crossorigin="" type="font/woff2"><link rel="preload" href="/_next/static/media/7e14bb49633babfd-s.p.woff" as="font" crossorigin="" type="font/woff"><link rel="stylesheet" href="/_next/static/css/853e0ba1670620c0.css" data-precedence="next"><link rel="stylesheet" href="/_next/static/css/77ecf995c84cc8ca.css" data-precedence="next"><link rel="preload" as="script" fetchpriority="low" href="/_next/static/chunks/webpack-08b44637620e59ee.js"><script src="/_next/static/chunks/4bd1b696-36f7dda1c313d355.js" async=""></script><script src="/_next/static/chunks/517-b6fc33c3b50dafa1.js" async=""></script><script src="/_next/static/chunks/main-app-a849309caff0f7ba.js" async=""></script><script src="/_next/static/chunks/173-0565fae75fba323e.js" async=""></script><script src="/_next/static/chunks/app/layout-f8d95c0da1f697cd.js" async=""></script><script src="/_next/static/chunks/app/error-33e323472ea15d25.js" async=""></script><script src="/_next/static/chunks/app/information/page-1aa2d32efbf3064b.js" async=""></script><meta name="next-size-adjust" content=""><title>George Davies</title><meta name="description" content="An independent design studio led by George Davies, making contemporary furniture for modern life."><link rel="icon" href="/favicon-32x32_light.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: dark)"><link rel="icon" href="/favicon-32x32_dark.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: light)"><link rel="canonical" href="/"><meta name="robots" content="index, follow"><meta property="og:locale" content="en_US"><meta property="og:title" content="George Davies"><meta property="og:description" content="An independent design studio led by George Davies, making contemporary furniture for modern life."><meta property="og:type" content="website"><meta property="og:image:width" content="2400"><meta property="og:image:height" content="1260"><meta name="image" content="/share.jpg"><meta property="og:image" content="https://georgedaviesstudio.com/share.jpg"><meta property="og:url" content="https://georgedaviesstudio.com/"><meta property="og:site_name" content="George Davies"><meta name="twitter:image" content="https://georgedaviesstudio.com/share.jpg"><meta name="twitter:title" content="George Davies"><meta name="twitter:creator" content="George Davies"><meta name="twitter:card" content="summary_large_image"><meta property="twitter:description" content="An independent design studio led by George Davies, making contemporary furniture for modern life."><link rel="apple-touch-icon" sizes="48x48" href="/icons/icon-48x48.png" type="image/png"><link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png" type="image/png"><link rel="apple-touch-icon" sizes="96x96" href="/icons/icon-96x96.png" type="image/png"><link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png" type="image/png"><link rel="apple-touch-icon" sizes="256x256" href="/icons/icon-256x256.png" type="image/png"><link rel="apple-touch-icon" sizes="384x284" href="/icons/icon-384x284.png" type="image/png"><link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png" type="image/png"><link rel="icon" sizes="48x48" href="/icons/icon-48x48.png" type="image/png"><link rel="icon" sizes="72x72" href="/icons/icon-72x72.png" type="image/png"><link rel="icon" sizes="96x96" href="/icons/icon-96x96.png" type="image/png"><link rel="icon" sizes="144x144" href="/icons/icon-144x144.png" type="image/png"><link rel="icon" sizes="256x256" href="/icons/icon-256x256.png" type="image/png"><link rel="icon" sizes="384x384" href="/icons/icon-384x384.png" type="image/png"><link rel="icon" sizes="512x512" href="/icons/icon-512x512.png" type="image/png"><script src="/_next/static/chunks/polyfills-42372ed130431b0a.js" nomodule=""></script><link rel="preload" href="/_next/static/css/fbaa619fd5028bc2.css" as="style"><link rel="preload" href="/_next/static/css/dad6d7c13c0d6374.css" as="style"><link rel="preload" href="/_next/static/css/50df703a1334b00f.css" as="style"></head><body class="__className_4e8178"><header class="header_header_wrapper__gh4l_  header_info_active__9WkMh "><a aria-label="home page" href="/">GEORGE DAVIES</a><a aria-label="commissions page" class="" href="/commissions">Commissions</a><a aria-label="catalog page" class="" href="/catalog">Catalog</a><a aria-label="information page" class="header_active_page__1lI7S" href="/information">Information</a></header><main role="main" class="information_info_wrapper__eZSVb"><div><h1>ABOUT:</h1><p>George Davies is born from the desire to create a new language for furniture.</p></div><div><h1>CONTACT:</h1><a aria-label="email" target="_blank" href="mailto:info@georgedaviesstudio.com?subject">info@georgedaviesstudio.com</a><a aria-label="telephone" href="tel:+‭+1 (858) 866-6583‬">+<!-- -->1 (858) 866-6583‬</a><a aria-label="instagram" target="_blank" href="https://www.instagram.com/georgedavies_studio/">@georgedavies_studio</a></div><div><p>Site design by<!-- --> <a class="information_underline__c4ErZ" aria-label="New Apology Projects" target="_blank" href="https://newapology.com/?ref=georgedaviesstudio.com">New Apology</a></p><p>Development by<!-- --> <a class="information_underline__c4ErZ" aria-label="Roko Gabrilo's Portfolio" target="_blank" href="https://roko-g.work/?ref=georgedaviesstudio.com">Roko Gabrilo</a></p></div></main><script src="/_next/static/chunks/webpack-08b44637620e59ee.js" async=""></script><script>(self.__next_f=self.__next_f||[]).push([0])</script><script>self.__next_f.push([1,"1:\"$Sreact.fragment\"\n2:I[4253,[\"173\",\"static/chunks/173-0565fae75fba323e.js\",\"177\",\"static/chunks/app/layout-f8d95c0da1f697cd.js\"],\"default\"]\n3:I[5244,[],\"\"]\n4:I[6395,[\"173\",\"static/chunks/173-0565fae75fba323e.js\",\"39\",\"static/chunks/app/error-33e323472ea15d25.js\"],\"default\"]\n5:I[3866,[],\"\"]\n6:I[8173,[\"173\",\"static/chunks/173-0565fae75fba323e.js\",\"107\",\"static/chunks/app/information/page-1aa2d32efbf3064b.js\"],\"\"]\n8:I[6213,[],\"OutletBoundary\"]\na:I[6213,[],\"MetadataBoundary\"]\nc:I[6213,[],\"ViewportBoundary\"]\ne:I[4835,[],\"\"]\n:HL[\"/_next/static/media/3c890a0251517e5f-s.p.woff2\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff2\"}]\n:HL[\"/_next/static/media/7e14bb49633babfd-s.p.woff\",\"font\",{\"crossOrigin\":\"\",\"type\":\"font/woff\"}]\n:HL[\"/_next/static/css/853e0ba1670620c0.css\",\"style\"]\n:HL[\"/_next/static/css/77ecf995c84cc8ca.css\",\"style\"]\n"])</script><script>self.__next_f.push([1,"0:{\"P\":null,\"b\":\"oFZ38rtrgVMxrBLrs_7gj\",\"p\":\"\",\"c\":[\"\",\"information\"],\"i\":false,\"f\":[[[\"\",{\"children\":[\"information\",{\"children\":[\"__PAGE__\",{}]}]},\"$undefined\",\"$undefined\",true],[\"\",[\"$\",\"$1\",\"c\",{\"children\":[[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/853e0ba1670620c0.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"html\",null,{\"lang\":\"en\",\"children\":[[[\"$\",\"title\",null,{\"children\":\"George Davies\"}],[\"$\",\"meta\",null,{\"name\":\"description\",\"content\":\"An independent design studio led by George Davies, making contemporary furniture for modern life.\"}],[\"$\",\"link\",null,{\"rel\":\"icon\",\"href\":\"/favicon-32x32_light.png\",\"sizes\":\"32x32\",\"type\":\"image/png\",\"media\":\"(prefers-color-scheme: dark)\"}],[\"$\",\"link\",null,{\"rel\":\"icon\",\"href\":\"/favicon-32x32_dark.png\",\"sizes\":\"32x32\",\"type\":\"image/png\",\"media\":\"(prefers-color-scheme: light)\"}],[\"$\",\"link\",null,{\"rel\":\"canonical\",\"href\":\"https://georgedaviesstudio.com/\"}],[\"$\",\"meta\",null,{\"name\":\"robots\",\"content\":\"index, follow\"}],[\"$\",\"meta\",null,{\"property\":\"og:locale\",\"content\":\"en_US\"}],[\"$\",\"meta\",null,{\"property\":\"og:title\",\"content\":\"George Davies\"}],[\"$\",\"meta\",null,{\"property\":\"og:description\",\"content\":\"An independent design studio led by George Davies, making contemporary furniture for modern life.\"}],[\"$\",\"meta\",null,{\"property\":\"og:type\",\"content\":\"website\"}],[\"$\",\"meta\",null,{\"property\":\"og:image:width\",\"content\":\"2400\"}],[\"$\",\"meta\",null,{\"property\":\"og:image:height\",\"content\":\"1260\"}],[\"$\",\"meta\",null,{\"name\":\"image\",\"content\":\"/share.jpg\"}],[\"$\",\"meta\",null,{\"property\":\"og:image\",\"content\":\"https://georgedaviesstudio.com/share.jpg\"}],[\"$\",\"meta\",null,{\"property\":\"og:url\",\"content\":\"https://georgedaviesstudio.com/\"}],[\"$\",\"meta\",null,{\"property\":\"og:site_name\",\"content\":\"George Davies\"}],[\"$\",\"meta\",null,{\"name\":\"twitter:image\",\"content\":\"https://georgedaviesstudio.com/share.jpg\"}],[\"$\",\"meta\",null,{\"name\":\"twitter:title\",\"content\":\"George Davies\"}],[\"$\",\"meta\",null,{\"name\":\"twitter:creator\",\"content\":\"George Davies\"}],[\"$\",\"meta\",null,{\"name\":\"twitter:card\",\"content\":\"summary_large_image\"}],[\"$\",\"meta\",null,{\"property\":\"twitter:description\",\"content\":\"An independent design studio led by George Davies, making contemporary furniture for modern life.\"}],[\"$\",\"link\",null,{\"rel\":\"apple-touch-icon\",\"sizes\":\"48x48\",\"href\":\"/icons/icon-48x48.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"apple-touch-icon\",\"sizes\":\"72x72\",\"href\":\"/icons/icon-72x72.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"apple-touch-icon\",\"sizes\":\"96x96\",\"href\":\"/icons/icon-96x96.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"apple-touch-icon\",\"sizes\":\"144x144\",\"href\":\"/icons/icon-144x144.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"apple-touch-icon\",\"sizes\":\"256x256\",\"href\":\"/icons/icon-256x256.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"apple-touch-icon\",\"sizes\":\"384x284\",\"href\":\"/icons/icon-384x284.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"apple-touch-icon\",\"sizes\":\"512x512\",\"href\":\"/icons/icon-512x512.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"icon\",\"sizes\":\"48x48\",\"href\":\"/icons/icon-48x48.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"icon\",\"sizes\":\"72x72\",\"href\":\"/icons/icon-72x72.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"icon\",\"sizes\":\"96x96\",\"href\":\"/icons/icon-96x96.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"icon\",\"sizes\":\"144x144\",\"href\":\"/icons/icon-144x144.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"icon\",\"sizes\":\"256x256\",\"href\":\"/icons/icon-256x256.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"icon\",\"sizes\":\"384x384\",\"href\":\"/icons/icon-384x384.png\",\"type\":\"image/png\"}],[\"$\",\"link\",null,{\"rel\":\"icon\",\"sizes\":\"512x512\",\"href\":\"/icons/icon-512x512.png\",\"type\":\"image/png\"}]],[\"$\",\"body\",null,{\"className\":\"__className_4e8178\",\"children\":[[\"$\",\"$L2\",null,{}],[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"segmentPath\":[\"children\"],\"error\":\"$4\",\"errorStyles\":[],\"errorScripts\":[],\"template\":[\"$\",\"$L5\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":[[],[\"$\",\"section\",null,{\"className\":\"error\",\"children\":[\"$\",\"$L6\",null,{\"href\":\"/\",\"aria-label\":\"Home\",\"replace\":true,\"prefetch\":true,\"children\":\"Page route does not exist. Click here to go home.\"}]}]],\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}]]}]]}],{\"children\":[\"information\",[\"$\",\"$1\",\"c\",{\"children\":[null,[\"$\",\"$L3\",null,{\"parallelRouterKey\":\"children\",\"segmentPath\":[\"children\",\"information\",\"children\"],\"error\":\"$undefined\",\"errorStyles\":\"$undefined\",\"errorScripts\":\"$undefined\",\"template\":[\"$\",\"$L5\",null,{}],\"templateStyles\":\"$undefined\",\"templateScripts\":\"$undefined\",\"notFound\":\"$undefined\",\"forbidden\":\"$undefined\",\"unauthorized\":\"$undefined\"}]]}],{\"children\":[\"__PAGE__\",[\"$\",\"$1\",\"c\",{\"children\":[\"$L7\",[[\"$\",\"link\",\"0\",{\"rel\":\"stylesheet\",\"href\":\"/_next/static/css/77ecf995c84cc8ca.css\",\"precedence\":\"next\",\"crossOrigin\":\"$undefined\",\"nonce\":\"$undefined\"}]],[\"$\",\"$L8\",null,{\"children\":\"$L9\"}]]}],{},null,false]},null,false]},null,false],[\"$\",\"$1\",\"h\",{\"children\":[null,[\"$\",\"$1\",\"9PNAeFjr3xW620IjDzeB3\",{\"children\":[[\"$\",\"$La\",null,{\"children\":\"$Lb\"}],[\"$\",\"$Lc\",null,{\"children\":\"$Ld\"}],[\"$\",\"meta\",null,{\"name\":\"next-size-adjust\",\"content\":\"\"}]]}]]}],false]],\"m\":\"$undefined\",\"G\":[\"$e\",\"$undefined\"],\"s\":false,\"S\":true}\n"])</script><script>self.__next_f.push([1,"d:[[\"$\",\"meta\",\"0\",{\"name\":\"viewport\",\"content\":\"width=device-width, initial-scale=1\"}]]\nb:[[\"$\",\"meta\",\"0\",{\"charSet\":\"utf-8\"}]]\n"])</script><script>self.__next_f.push([1,"9:null\n"])</script><script>self.__next_f.push([1,"7:[\"$\",\"main\",null,{\"role\":\"main\",\"className\":\"information_info_wrapper__eZSVb\",\"children\":[[\"$\",\"div\",null,{\"children\":[[\"$\",\"h1\",null,{\"children\":\"ABOUT:\"}],[\"$\",\"p\",null,{\"children\":\"George Davies is born from the desire to create a new language for furniture.\"}]]}],[\"$\",\"div\",null,{\"children\":[[\"$\",\"h1\",null,{\"children\":\"CONTACT:\"}],[\"$\",\"$L6\",null,{\"href\":\"mailto:info@georgedaviesstudio.com?subject\",\"aria-label\":\"email\",\"target\":\"_blank\",\"children\":\"info@georgedaviesstudio.com\"}],[\"$\",\"$L6\",null,{\"href\":\"tel:+‭+1 (858) 866-6583‬\",\"aria-label\":\"telephone\",\"children\":[\"+\",\"1 (858) 866-6583‬\"]}],[\"$\",\"$L6\",null,{\"href\":\"https://www.instagram.com/georgedavies_studio/\",\"aria-label\":\"instagram\",\"target\":\"_blank\",\"children\":\"@georgedavies_studio\"}]]}],[\"$\",\"div\",null,{\"children\":[[\"$\",\"p\",null,{\"children\":[\"Site design by\",\" \",[\"$\",\"$L6\",null,{\"className\":\"information_underline__c4ErZ\",\"href\":\"https://newapology.com/?ref=georgedaviesstudio.com\",\"aria-label\":\"New Apology Projects\",\"target\":\"_blank\",\"children\":\"New Apology\"}]]}],[\"$\",\"p\",null,{\"children\":[\"Development by\",\" \",[\"$\",\"$L6\",null,{\"className\":\"information_underline__c4ErZ\",\"href\":\"https://roko-g.work/?ref=georgedaviesstudio.com\",\"aria-label\":\"Roko Gabrilo's Portfolio\",\"target\":\"_blank\",\"children\":\"Roko Gabrilo\"}]]}]]}]]}]\n"])</script><next-route-announcer style="position: absolute;"></next-route-announcer>
+<script>
+(function() {
+  // 1. Next.js App Router RSC 자동 요청 차단 (전체 리로드 방지)
+  var _origFetch = window.fetch;
+  window.fetch = function(url, opts) {
+    var urlStr = typeof url === 'string' ? url : (url && url.url) || '';
+    var headers = (opts && opts.headers) || {};
+    var isRSC = headers['Next-Router-State-Tree'] ||
+                headers['RSC'] === '1' ||
+                headers['Next-Url'] ||
+                urlStr.indexOf('_rsc=') !== -1;
+    if(isRSC) return Promise.resolve(new Response('', { status: 204 }));
+    return _origFetch.apply(this, arguments);
+  };
+
+  // 2. 동일 URL replaceState 무시 (리로드 루프 방지)
+  var _replaceState = history.replaceState;
+  history.replaceState = function(state, title, url) {
+    if(url && url.toString() === location.pathname + location.search) return;
+    return _replaceState.apply(this, arguments);
+  };
+
+  // 3. Next.js 링크 클릭 시 일반 페이지 이동으로 강제 전환
+  //    단, 해시 링크(#menu, #contact 등)는 건드리지 않음 → 페이지 내 스크롤 유지
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('a[href]');
+    if (!link) return;
+    try {
+      var href = link.getAttribute('href') || '';
+      if (href.charAt(0) === '#') return; // 해시 링크는 그대로 통과
+      var u = new URL(link.href);
+      if (u.hash && u.pathname === window.location.pathname) return; // 같은 페이지 내 해시 이동도 통과
+      if (u.origin === window.location.origin) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        window.location.href = link.href;
+      }
+    } catch(err) {}
+  }, true);
+})();
+</script></body></html>

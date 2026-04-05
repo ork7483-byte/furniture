@@ -1,0 +1,20 @@
+{
+  "og:locale": "en_US",
+  "og:title": "George Davies",
+  "og:description": "An independent design studio led by George Davies, making contemporary furniture for modern life.",
+  "og:type": "website",
+  "og:image:width": "2400",
+  "og:image:height": "1260",
+  "og:image": "https://georgedaviesstudio.com/share.jpg",
+  "og:url": "https://georgedaviesstudio.com/",
+  "og:site_name": "George Davies",
+  "twitter:image": "https://georgedaviesstudio.com/share.jpg",
+  "twitter:title": "George Davies",
+  "twitter:creator": "George Davies",
+  "twitter:card": "summary_large_image",
+  "twitter:description": "An independent design studio led by George Davies, making contemporary furniture for modern life.",
+  "title": "George Davies",
+  "description": "An independent design studio led by George Davies, making contemporary furniture for modern life.",
+  "canonical": "https://georgedaviesstudio.com/",
+  "favicon": "/favicon-32x32_light.png"
+}

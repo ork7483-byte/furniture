@@ -1,0 +1,162 @@
+<!DOCTYPE html><html lang="en"><head><script>
+(function(){
+  // 1. 기본 reload 차단
+  const noop = function(){ console.log("Blocked reload"); };
+  window.location.reload = noop;
+
+  // 2. Sanity Live / Next.js Fast Refresh 웹소켓 & EventSource 끊김에 의한 무한 새로고침 차단
+  window.EventSource = function(){ return { close:noop, addEventListener:noop, removeEventListener:noop, readyState:2 }; };
+  window.WebSocket = function(){ return { send:noop, close:noop, addEventListener:noop, removeEventListener:noop, readyState:1 }; };
+
+  // 3. location.replace / assign 을 통한 강제 이동 차단
+  const _replace = window.location.replace;
+  const _assign = window.location.assign;
+  window.location.replace = function(url){ if(url !== window.location.href) _replace.call(window.location, url); };
+  window.location.assign = function(url){ if(url !== window.location.href) _assign.call(window.location, url); };
+
+  // 4. [Sanity 완전 차단] Sanity Live Preview / Groq 실시간 구독 무력화
+  // Sanity client의 listen(), live preview, 실시간 쿼리 차단
+  var _origFetch = window.fetch;
+  window.fetch = function(url, opts) {
+    var urlStr = typeof url === 'string' ? url : (url && url.url) || '';
+    // Sanity API 실시간 요청 차단 (listen, live preview)
+    if (urlStr.indexOf('sanity.io') !== -1 && (urlStr.indexOf('listen') !== -1 || urlStr.indexOf('mutate') !== -1)) {
+      console.log('Blocked Sanity live request:', urlStr);
+      return Promise.resolve(new Response('{}', { status: 200, headers: {'Content-Type':'application/json'} }));
+    }
+    // Sanity CDN groq 쿼리의 반복 polling 차단
+    if (urlStr.indexOf('apicdn.sanity.io') !== -1 && urlStr.indexOf('$listen') !== -1) {
+      console.log('Blocked Sanity listen:', urlStr);
+      return Promise.resolve(new Response('{}', { status: 200, headers: {'Content-Type':'application/json'} }));
+    }
+    return _origFetch.apply(this, arguments);
+  };
+
+  // 5. [Sanity] MutationObserver 기반 자동 새로고침 차단
+  // Sanity는 DOM 변경 감지 후 리렌더링 트리거하는 경우가 있음
+  var _origMO = window.MutationObserver;
+  window.MutationObserver = function(callback) {
+    // 콜백을 감싸서 reload 시도하면 차단
+    var wrappedCallback = function(mutations, observer) {
+      try { callback(mutations, observer); } catch(e) {}
+    };
+    return new _origMO(wrappedCallback);
+  };
+  window.MutationObserver.prototype = _origMO.prototype;
+
+  // 6. [Sanity] setInterval/setTimeout 기반 polling 새로고침 차단
+  var _origSetInterval = window.setInterval;
+  window.setInterval = function(fn, ms) {
+    // 5초 이하 반복은 Sanity polling일 가능성 → 30초로 늦춤
+    if (ms && ms < 5000) ms = 30000;
+    return _origSetInterval.call(window, fn, ms);
+  };
+
+  // 7. meta refresh 태그 제거
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('meta[http-equiv="refresh"]').forEach(function(m) { m.remove(); });
+    // 폼 submit 전송 차단 (백엔드로 데이터 전송 방지)
+    document.querySelectorAll('form').forEach(function(form) {
+      form.removeAttribute('action');
+      form.addEventListener('submit', function(e) { e.preventDefault(); }, true);
+    });
+  });
+})();
+</script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="preload" href="/_next/static/media/3c890a0251517e5f-s.p.woff2" as="font" crossorigin="" type="font/woff2"><link rel="preload" href="/_next/static/media/7e14bb49633babfd-s.p.woff" as="font" crossorigin="" type="font/woff"><link rel="preload" as="image" imagesrcset="/assets/images.ctfassets.net/rbzwl9ygnekd/4LrxTa3OMFHURoHHhLjFw/6493e9fa4dab9a7380186b3f4e9c6200/grittables_mobile.webp" imagesizes="100vw"><link rel="preload" as="image" href="/assets/images.ctfassets.net/rbzwl9ygnekd/1CuEeyfwQb5TrP2Gw9i7Wi/1ca2556613c6fcdb0c2131de9992bc87/GD-Commission-BreakRoomTables.svg"><link rel="preload" as="image" imagesrcset="/assets/images.ctfassets.net/rbzwl9ygnekd/6G9s4704crifLOEEOH8E2R/b6f94b7042cb7fa20fc817b6fd24f188/GD_AC1_mobilecrop.webp" imagesizes="100vw"><link rel="preload" as="image" href="/assets/images.ctfassets.net/rbzwl9ygnekd/6JD4Ic2uYWqMH30BhRFGNK/fd136340e4660771b77f33dd77f8869e/GD-AC1_overlay.svg"><link rel="preload" as="image" imagesrcset="/assets/images.ctfassets.net/rbzwl9ygnekd/7Ilxx2AndzJfhkGcf7O4qi/f827fac697cf6997d7726dafb4dac4b7/gritskatecouch_mobile.webp" imagesizes="100vw"><link rel="preload" as="image" href="/assets/images.ctfassets.net/rbzwl9ygnekd/3Zdir5kw27a3EiCpbC2MQq/a9a3ce4f735da4d41f53202847d520b4/GD-Commission-SkateCouch.svg"><link rel="preload" as="image" imagesrcset="/assets/images.ctfassets.net/rbzwl9ygnekd/1nxZVhzz3LypA882yw8QlZ/a3b629330946da3c716cc00c3864c3f6/aluminumchair_mobilecrop.webp" imagesizes="100vw"><link rel="preload" as="image" href="/assets/images.ctfassets.net/rbzwl9ygnekd/5z3u88wL7s7Ezrt5dc2x7b/46b767a4ba96c95ccb2f1ac909b0ea08/GD-Commission-AluminumChair.svg"><link rel="preload" as="image" imagesrcset="/assets/images.ctfassets.net/rbzwl9ygnekd/3qoWGyLDCtWAEeBSzfpysL/1e10a2a22a10c4018a22a512969b539f/familytable_mobilecrop.jpg" imagesizes="100vw"><link rel="preload" as="image" href="/assets/images.ctfassets.net/rbzwl9ygnekd/6mOxmjwDFZ7xHnosqGtPOw/f404f991ac796aa4b02309dd16445749/GD-DC4_overlay.svg"><link rel="stylesheet" href="/_next/static/css/853e0ba1670620c0.css" data-precedence="next"><link rel="stylesheet" href="/_next/static/css/fbaa619fd5028bc2.css" data-precedence="next"><link rel="preload" as="script" fetchpriority="low" href="/_next/static/chunks/webpack-08b44637620e59ee.js"><meta name="next-size-adjust" content=""><title>George Davies</title><meta name="description" content="An independent design studio led by George Davies, making contemporary furniture for modern life."><link rel="icon" href="/favicon-32x32_light.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: dark)"><link rel="icon" href="/favicon-32x32_dark.png" sizes="32x32" type="image/png" media="(prefers-color-scheme: light)"><link rel="canonical" href="/"><meta name="robots" content="index, follow"><meta property="og:locale" content="en_US"><meta property="og:title" content="George Davies"><meta property="og:description" content="An independent design studio led by George Davies, making contemporary furniture for modern life."><meta property="og:type" content="website"><meta property="og:image:width" content="2400"><meta property="og:image:height" content="1260"><meta name="image" content="/share.jpg"><meta property="og:image" content="https://georgedaviesstudio.com/share.jpg"><meta property="og:url" content="https://georgedaviesstudio.com/"><meta property="og:site_name" content="George Davies"><meta name="twitter:image" content="https://georgedaviesstudio.com/share.jpg"><meta name="twitter:title" content="George Davies"><meta name="twitter:creator" content="George Davies"><meta name="twitter:card" content="summary_large_image"><meta property="twitter:description" content="An independent design studio led by George Davies, making contemporary furniture for modern life."><link rel="apple-touch-icon" sizes="48x48" href="/icons/icon-48x48.png" type="image/png"><link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png" type="image/png"><link rel="apple-touch-icon" sizes="96x96" href="/icons/icon-96x96.png" type="image/png"><link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png" type="image/png"><link rel="apple-touch-icon" sizes="256x256" href="/icons/icon-256x256.png" type="image/png"><link rel="apple-touch-icon" sizes="384x284" href="/icons/icon-384x284.png" type="image/png"><link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png" type="image/png"><link rel="icon" sizes="48x48" href="/icons/icon-48x48.png" type="image/png"><link rel="icon" sizes="72x72" href="/icons/icon-72x72.png" type="image/png"><link rel="icon" sizes="96x96" href="/icons/icon-96x96.png" type="image/png"><link rel="icon" sizes="144x144" href="/icons/icon-144x144.png" type="image/png"><link rel="icon" sizes="256x256" href="/icons/icon-256x256.png" type="image/png"><link rel="icon" sizes="384x384" href="/icons/icon-384x384.png" type="image/png"><link rel="icon" sizes="512x512" href="/icons/icon-512x512.png" type="image/png"><link rel="preload" as="image" imagesrcset="/assets/images.ctfassets.net/rbzwl9ygnekd/7bg431zZIA6F4Ed6qO3oF4/517cd032eab7fb1b95912d94afb832cd/Preloader3.webp" imagesizes="100vw"><link rel="preload" as="image" imagesrcset="https://images.ctfassets.net/rbzwl9ygnekd/6EJKO6kPVzHka0hiQPpePx/49bb070a63aa8ba9892b2579dd669627/Green_Chair_1920x1080.avif" imagesizes="100vw"><link rel="preload" as="image" imagesrcset="/assets/images.ctfassets.net/rbzwl9ygnekd/2lc7O4q4drCSecGd8blzvk/303ef0cc42cce4202fee8c72f02a2d31/Preloader4.webp" imagesizes="100vw"><link rel="preload" as="image" imagesrcset="/assets/images.ctfassets.net/rbzwl9ygnekd/01HpXYXwbEvta4nAb8NVBP/fe948c18a9fd030e2737eb3c15572c32/aluminumchair_cropped2.jpg" imagesizes="100vw"><link rel="preload" as="image" imagesrcset="/assets/images.ctfassets.net/rbzwl9ygnekd/1ZW17cFxXKam8NnPb0bozd/e880eea2393ae60533bd606413d86819/familytable_1920x1080.jpg" imagesizes="100vw"><link rel="preload" href="/_next/static/css/50df703a1334b00f.css" as="style"><link rel="preload" href="/_next/static/css/dad6d7c13c0d6374.css" as="style"><link rel="preload" href="/_next/static/css/77ecf995c84cc8ca.css" as="style"></head><body class="__className_4e8178"><header class="header_header_wrapper__gh4l_ header_home_active__hpUHi  "><a aria-label="home page" href="/">GEORGE DAVIES</a><a aria-label="commissions page" class="" href="/commissions">Commissions</a><a aria-label="catalog page" class="" href="/catalog">Catalog</a><a aria-label="information page" class="" href="/information">Information</a></header><style>
+/* 데스크탑/모바일 이미지 전환 (원본은 React state로 처리) */
+.preloader_img__3Z5cM.mobile-img { display: none; }
+@media (max-width: 600px) {
+  .preloader_img__3Z5cM.desktop-img { display: none; }
+  .preloader_img__3Z5cM.mobile-img { display: block; }
+}
+</style>
+<main role="main" class="preloader_preloader_wrapper__fmFqi" aria-label="click to go to commissions page" style="height: 100vh;"><div class="preloader_img_wrapper__2GjyW" style="transition: transform 1.5s cubic-bezier(0.5, 0, 0.15, 1); transform: translateY(0) translateZ(0px); min-height: 100vh;"><img alt="Steel Break Room Tables" decoding="async" class="preloader_img__3Z5cM desktop-img" sizes="100vw" src="/assets/images.ctfassets.net/rbzwl9ygnekd/7bg431zZIA6F4Ed6qO3oF4/517cd032eab7fb1b95912d94afb832cd/Preloader3.webp"><img alt="Steel Break Room Tables" decoding="async" class="preloader_img__3Z5cM mobile-img" sizes="100vw" src="/assets/images.ctfassets.net/rbzwl9ygnekd/4LrxTa3OMFHURoHHhLjFw/6493e9fa4dab9a7380186b3f4e9c6200/grittables_mobile.webp"><img alt="" class="preloader_img_tag__gz5Fs" src="/assets/images.ctfassets.net/rbzwl9ygnekd/1CuEeyfwQb5TrP2Gw9i7Wi/1ca2556613c6fcdb0c2131de9992bc87/GD-Commission-BreakRoomTables.svg"><div class="preloader_loader__LFd7m"><svg width="3" height="3" viewBox="0 0 3 3" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="1.5" cy="1.5" r="1.5" fill="var(--black)"></circle></svg></div></div><div class="preloader_img_wrapper__2GjyW" style="transition: transform 1.5s cubic-bezier(0.5, 0, 0.15, 1); transform: translateY(0) translateZ(0px); min-height: 100vh;"><img alt="Brake Formed Aluminum Chair" decoding="async" class="preloader_img__3Z5cM desktop-img" sizes="100vw" src="/assets/images.ctfassets.net/rbzwl9ygnekd/6EJKO6kPVzHka0hiQPpePx/49bb070a63aa8ba9892b2579dd669627/Green_Chair_1920x1080.avif"><img alt="Brake Formed Aluminum Chair" decoding="async" class="preloader_img__3Z5cM mobile-img" sizes="100vw" src="/assets/images.ctfassets.net/rbzwl9ygnekd/6G9s4704crifLOEEOH8E2R/b6f94b7042cb7fa20fc817b6fd24f188/GD_AC1_mobilecrop.webp"><img alt="" class="preloader_img_tag__gz5Fs" src="/assets/images.ctfassets.net/rbzwl9ygnekd/6JD4Ic2uYWqMH30BhRFGNK/fd136340e4660771b77f33dd77f8869e/GD-AC1_overlay.svg"><div class="preloader_loader__LFd7m"><svg width="3" height="3" viewBox="0 0 3 3" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="1.5" cy="1.5" r="1.5" fill="var(--black)"></circle></svg></div></div><div class="preloader_img_wrapper__2GjyW" style="transition: transform 1.5s cubic-bezier(0.5, 0, 0.15, 1); transform: translateY(0) translateZ(0px); min-height: 100vh;"><img alt="Skate Couch" decoding="async" class="preloader_img__3Z5cM desktop-img" sizes="100vw" src="/assets/images.ctfassets.net/rbzwl9ygnekd/2lc7O4q4drCSecGd8blzvk/303ef0cc42cce4202fee8c72f02a2d31/Preloader4.webp"><img alt="Skate Couch" decoding="async" class="preloader_img__3Z5cM mobile-img" sizes="100vw" src="/assets/images.ctfassets.net/rbzwl9ygnekd/7Ilxx2AndzJfhkGcf7O4qi/f827fac697cf6997d7726dafb4dac4b7/gritskatecouch_mobile.webp"><img alt="" class="preloader_img_tag__gz5Fs" src="/assets/images.ctfassets.net/rbzwl9ygnekd/3Zdir5kw27a3EiCpbC2MQq/a9a3ce4f735da4d41f53202847d520b4/GD-Commission-SkateCouch.svg"><div class="preloader_loader__LFd7m"><svg width="3" height="3" viewBox="0 0 3 3" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="1.5" cy="1.5" r="1.5" fill="var(--black)"></circle></svg></div></div><div class="preloader_img_wrapper__2GjyW" style="transition: transform 1.5s cubic-bezier(0.5, 0, 0.15, 1); transform: translateY(0) translateZ(0px); min-height: 100vh;"><img alt="Aluminum Chair" decoding="async" class="preloader_img__3Z5cM desktop-img" sizes="100vw" src="/assets/images.ctfassets.net/rbzwl9ygnekd/01HpXYXwbEvta4nAb8NVBP/fe948c18a9fd030e2737eb3c15572c32/aluminumchair_cropped2.jpg"><img alt="Aluminum Chair" decoding="async" class="preloader_img__3Z5cM mobile-img" sizes="100vw" src="/assets/images.ctfassets.net/rbzwl9ygnekd/1nxZVhzz3LypA882yw8QlZ/a3b629330946da3c716cc00c3864c3f6/aluminumchair_mobilecrop.webp"><img alt="" class="preloader_img_tag__gz5Fs" src="/assets/images.ctfassets.net/rbzwl9ygnekd/5z3u88wL7s7Ezrt5dc2x7b/46b767a4ba96c95ccb2f1ac909b0ea08/GD-Commission-AluminumChair.svg"><div class="preloader_loader__LFd7m"><svg width="3" height="3" viewBox="0 0 3 3" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="1.5" cy="1.5" r="1.5" fill="var(--black)"></circle></svg></div></div><div class="preloader_img_wrapper__2GjyW" style="transition: transform 1.5s cubic-bezier(0.5, 0, 0.15, 1); transform: translateY(0) translateZ(0px); min-height: 100vh;"><img alt="Family Table" decoding="async" class="preloader_img__3Z5cM desktop-img" sizes="100vw" src="/assets/images.ctfassets.net/rbzwl9ygnekd/1ZW17cFxXKam8NnPb0bozd/e880eea2393ae60533bd606413d86819/familytable_1920x1080.jpg"><img alt="Family Table" decoding="async" class="preloader_img__3Z5cM mobile-img" sizes="100vw" src="/assets/images.ctfassets.net/rbzwl9ygnekd/3qoWGyLDCtWAEeBSzfpysL/1e10a2a22a10c4018a22a512969b539f/familytable_mobilecrop.jpg"><img alt="" class="preloader_img_tag__gz5Fs" src="/assets/images.ctfassets.net/rbzwl9ygnekd/6mOxmjwDFZ7xHnosqGtPOw/f404f991ac796aa4b02309dd16445749/GD-DC4_overlay.svg"><div class="preloader_loader__LFd7m"><svg width="3" height="3" viewBox="0 0 3 3" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="1.5" cy="1.5" r="1.5" fill="var(--black)"></circle></svg></div></div></main>
+<script>
+(function() {
+  // 1. Next.js App Router RSC 자동 요청 차단 (전체 리로드 방지)
+  var _origFetch = window.fetch;
+  window.fetch = function(url, opts) {
+    var urlStr = typeof url === 'string' ? url : (url && url.url) || '';
+    var headers = (opts && opts.headers) || {};
+    var isRSC = headers['Next-Router-State-Tree'] ||
+                headers['RSC'] === '1' ||
+                headers['Next-Url'] ||
+                urlStr.indexOf('_rsc=') !== -1;
+    if(isRSC) return Promise.resolve(new Response('', { status: 204 }));
+    return _origFetch.apply(this, arguments);
+  };
+
+  // 2. 동일 URL replaceState 무시 (리로드 루프 방지)
+  var _replaceState = history.replaceState;
+  history.replaceState = function(state, title, url) {
+    if(url && url.toString() === location.pathname + location.search) return;
+    return _replaceState.apply(this, arguments);
+  };
+
+  // 3. Next.js 링크 클릭 시 일반 페이지 이동으로 강제 전환
+  //    단, 해시 링크(#menu, #contact 등)는 건드리지 않음 → 페이지 내 스크롤 유지
+  document.addEventListener('click', function(e) {
+    var link = e.target.closest('a[href]');
+    if (!link) return;
+    try {
+      var href = link.getAttribute('href') || '';
+      if (href.charAt(0) === '#') return; // 해시 링크는 그대로 통과
+      var u = new URL(link.href);
+      if (u.hash && u.pathname === window.location.pathname) return; // 같은 페이지 내 해시 이동도 통과
+      if (u.origin === window.location.origin) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        window.location.href = link.href;
+      }
+    } catch(err) {}
+  }, true);
+})();
+</script>
+<script>
+(function(){
+  var main = document.querySelector('.preloader_preloader_wrapper__fmFqi');
+  if(!main) return;
+  var slides = main.querySelectorAll('.preloader_img_wrapper__2GjyW');
+  var tags = main.querySelectorAll('.preloader_img_tag__gz5Fs');
+  var total = slides.length;
+  if(total === 0) return;
+  var current = 0;
+
+  // 이미지 로드 완료 시 loader 숨기기
+  slides.forEach(function(slide){
+    var imgs = slide.querySelectorAll('.preloader_img__3Z5cM');
+    imgs.forEach(function(img){
+      function hideLoader(){
+        var loader = slide.querySelector('.preloader_loader__LFd7m');
+        if(loader) loader.classList.add('preloader_loaded__h9KBl');
+      }
+      if(img.complete) hideLoader();
+      else img.addEventListener('load', hideLoader);
+    });
+  });
+
+  // 스크롤/터치 차단
+  main.addEventListener('wheel', function(e){ e.preventDefault(); }, {passive:false});
+  main.addEventListener('touchmove', function(e){ e.preventDefault(); }, {passive:false});
+  // 클릭 시 /commissions 이동
+  main.addEventListener('click', function(){ window.location.href = '/commissions'; });
+  // 첫 슬라이드 태그 활성화
+  if(tags[0]) tags[0].className = 'preloader_img_tag__gz5Fs preloader_active__agAXT';
+  // 5초마다 슬라이드 전환
+  var timer = setInterval(function(){
+    if(current < total - 1) {
+      current++;
+    } else {
+      clearInterval(timer);
+      window.location.href = '/commissions';
+      return;
+    }
+    slides.forEach(function(slide){
+      slide.style.transform = 'translateY(-' + (100 * current) + '%) translateZ(0px)';
+    });
+    tags.forEach(function(tag, i){
+      tag.className = i === current ? 'preloader_img_tag__gz5Fs preloader_active__agAXT' : 'preloader_img_tag__gz5Fs';
+    });
+  }, 5000);
+})();
+</script></body></html>

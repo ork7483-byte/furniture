@@ -1,0 +1,13 @@
+{
+  "frameworks": [
+    "Next.js"
+  ],
+  "jsLibraries": [],
+  "cssFrameworks": [],
+  "animations": [],
+  "cms": [],
+  "cdn": [],
+  "analytics": [],
+  "buildTool": "Next.js",
+  "recommendation": "Next.js App Router + GSAP + Tailwind CSS"
+}
